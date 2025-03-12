@@ -1,0 +1,338 @@
+ // Sample list of possible categorySuggestions
+        const categorySuggestions = [];
+        const topicSuggestions = [];
+        const subTopicSuggestions = [];
+
+        // Get references to the input field and the suggestion list
+        const categoryInputField = document.getElementById("quesCategoryField");
+        const topicInputField = document.getElementById("quesTopicField");
+        const subTopicInputField = document.getElementById("quesSubTopicField");
+
+        subTopicInputField.disabled = true;
+        topicInputField.disabled = true;
+
+        const suggestionList1 = document.getElementById("myUL1");
+        const suggestionList2 = document.getElementById("myUL2");
+        const suggestionList3 = document.getElementById("myUL3");
+
+        // Function to update the suggestion list based on user input
+        categoryInputField.addEventListener("input", function updateSuggestions() {
+            $.ajax({
+                url: 'ajax_get_categories_db.php',
+                type: 'POST',
+                data: {
+                    value: this.value
+                },
+                success: function (data) {
+                    // Assuming your PHP script returns a JSON array
+                    suggestionList1.innerHTML = '';
+                    categorySuggestions.length = 0;
+                    data = JSON.parse(data);
+                    // console.log(data[0]);
+                    if (data[0] != "Empty value") {
+                        // console.log(data[0] != "Empty value");
+                        if (Array.isArray(data)) {
+                            $.each(data, function (index, item) {
+                                categorySuggestions.push(item);
+                            });
+                            suggestionList1.innerHTML = ''; // Clear previous categorySuggestions
+
+                            for (let suggestion of categorySuggestions) {
+                                let listItem = document.createElement("li");
+                                listItem.setAttribute("class", "dropdown-item");
+                                listItem.textContent = suggestion;
+                                suggestionList1.appendChild(listItem);
+                            }
+
+                            if (suggestionList1.classList.contains("d-none")) {
+                                suggestionList1.classList.remove("d-none");
+                            }
+                        } else {
+
+                        }
+                    } else {
+                        closeSuggestions1();
+                    }
+                },
+                error: function () {
+                    // console.error('Error in AJAX request');
+                }
+            });
+        });
+
+        // Function to update the suggestion list based on user input
+        topicInputField.addEventListener("input", function updateSuggestions() {
+            $.ajax({
+                url: 'ajax_get_topic_db.php',
+                type: 'POST',
+                data: {
+                    value: this.value,
+                    category: $("#quesCategoryField").val()
+                },
+                success: function (data) {
+                    // Assuming your PHP script returns a JSON array
+                    suggestionList2.innerHTML = '';
+                    topicSuggestions.length = 0;
+                    data = JSON.parse(data);
+                    // console.log(data[0]);
+                    if (data[0] != "Empty value") {
+                        // console.log(data[0] != "Empty value");
+                        if (Array.isArray(data)) {
+                            $.each(data, function (index, item) {
+                                topicSuggestions.push(item);
+                            });
+                            suggestionList2.innerHTML = ''; // Clear previous topicSuggestions
+
+                            for (let suggestion of topicSuggestions) {
+                                let listItem = document.createElement("li");
+                                listItem.setAttribute("class", "dropdown-item");
+                                listItem.textContent = suggestion;
+                                suggestionList2.appendChild(listItem);
+                            }
+
+                            if (suggestionList2.classList.contains("d-none")) {
+                                suggestionList2.classList.remove("d-none");
+                            }
+                        } else {
+
+                        }
+                    } else {
+                        closeSuggestions2();
+                    }
+                },
+                error: function () {
+                    // console.error('Error in AJAX request');
+                }
+            });
+        });
+
+
+        // Function to update the suggestion list based on user input
+        subTopicInputField.addEventListener("input", function updateSuggestions() {
+            $.ajax({
+                url: 'ajax_get_subtopic_db.php',
+                type: 'POST',
+                data: {
+                    value: this.value,
+                    category: $(categoryInputField).val(),
+                    topic: $(topicInputField).val()
+                },
+                success: function (data) {
+                    // Assuming your PHP script returns a JSON array
+                    suggestionList3.innerHTML = '';
+                    subTopicSuggestions.length = 0;
+                    data = JSON.parse(data);
+                    // console.log(data[0]);
+                    if (data[0] != "Empty value") {
+                        // console.log(data[0] != "Empty value");
+                        if (Array.isArray(data)) {
+                            $.each(data, function (index, item) {
+                                subTopicSuggestions.push(item);
+                            });
+                            suggestionList3.innerHTML = ''; // Clear previous subTopicSuggestions
+
+                            for (let suggestion of subTopicSuggestions) {
+                                let listItem = document.createElement("li");
+                                listItem.setAttribute("class", "dropdown-item");
+                                listItem.textContent = suggestion;
+                                suggestionList3.appendChild(listItem);
+                            }
+
+                            if (suggestionList3.classList.contains("d-none")) {
+                                suggestionList3.classList.remove("d-none");
+                            }
+                        } else {
+                        }
+                    } else {
+                        closeSuggestions3();
+                    }
+                },
+                error: function () {
+                    // console.error('Error in AJAX request');
+                }
+            });
+        });
+
+        categoryInputField.addEventListener("input", function () {
+            closeSuggestions2();
+            closeSuggestions3();
+
+            if (categoryInputField.value.trim() === "") {
+                // If categoryInputField is empty, disable the other fields
+                topicInputField.disabled = true;
+                topicInputField.value = "";
+                subTopicInputField.disabled = true;
+                subTopicInputField.value = "";
+            } else {
+                // If categoryInputField is not empty, enable the topicInputField
+                topicInputField.disabled = false;
+            }
+        });
+
+        topicInputField.addEventListener("input", function () {
+            closeSuggestions1();
+            closeSuggestions3();
+            if (topicInputField.value.trim() === "") {
+                // If topicInputField is empty, disable the subTopicInputField
+                subTopicInputField.disabled = true;
+                subTopicInputField.value = "";
+            } else {
+                // If topicInputField is not empty, enable the subTopicInputField
+                subTopicInputField.disabled = false;
+            }
+        });
+
+        subTopicInputField.addEventListener("input", function () {
+            closeSuggestions1();
+            closeSuggestions2();
+        });
+
+        suggestionList1.addEventListener("click", function (event) {
+            // Check if the clicked element is an <li> within the <ul>
+            if (event.target.tagName === "LI") {
+                const clickedText = event.target.textContent;
+                if (clickedText != "No suggestions found") {
+                    categoryInputField.value = clickedText;
+                }
+                closeSuggestions1(); // Close the suggestion list
+            }
+        });
+
+        suggestionList2.addEventListener("click", function (event) {
+            // Check if the clicked element is an <li> within the <ul>
+            if (event.target.tagName === "LI") {
+                const clickedText = event.target.textContent;
+                if (clickedText != "No suggestions found") {
+                    topicInputField.value = clickedText;
+                }
+                closeSuggestions2(); // Close the suggestion list
+            }
+        });
+
+        suggestionList3.addEventListener("click", function (event) {
+            // Check if the clicked element is an <li> within the <ul>
+            if (event.target.tagName === "LI") {
+                const clickedText = event.target.textContent;
+                if (clickedText != "No suggestions found") {
+                    subTopicInputField.value = clickedText;
+                }
+                closeSuggestions3(); // Close the suggestion list
+            }
+        });
+
+        // Function to close the suggestion list
+        function closeSuggestions1() {
+            suggestionList1.classList.add("d-none");
+            suggestionList1.innerHTML = '';
+            categorySuggestions.length = [];
+        }
+        function closeSuggestions2() {
+            suggestionList2.classList.add("d-none");
+            suggestionList2.innerHTML = '';
+            categorySuggestions.length = [];
+        }
+        function closeSuggestions3() {
+            suggestionList3.classList.add("d-none");
+            suggestionList3.innerHTML = '';
+            categorySuggestions.length = [];
+        }
+        // Add an event listener to the document
+        document.addEventListener("click", function (event) {
+            const target = event.target;
+            // Check if the click target is outside the suggestionList1
+            if (target !== suggestionList1 && !suggestionList1.contains(target)) {
+                // Add the "d-none" class to hide the suggestionList1
+                closeSuggestions1();
+                closeSuggestions2();
+                closeSuggestions3();
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Tab") {
+                closeSuggestions1();
+                closeSuggestions2();
+                closeSuggestions3();
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$result = mysqli_query($conn, $query);
+
+if ($result) {
+    $questionNumber = 1;
+    $printedQuestions = [];
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $questionText = $row['ques_text'];
+        $questionId = $row['ques_id'];
+        $questionMarks = $row['ques_marks'];
+
+        if (!in_array($questionId, $printedQuestions)) {
+            // Fetch existing options for the question
+            $existingOptionsQuery = "SELECT ques_answer, ques_correctanswer FROM question";
+            $existingOptionsResult = mysqli_query($conn, $existingOptionsQuery);
+            $existingOptions = [];
+            $correctAnswers = [];
+            while ($optionRow = mysqli_fetch_assoc($existingOptionsResult)) {
+                $existingOptions[] = $optionRow['ques_answer'];
+                if ($optionRow['ques_correctanswer'] == 1) {
+                    $correctAnswers[] = $optionRow['ques_answer'];
+                }
+            }
+
+            // Display update form for the question
+            echo '<form method="post" action="#" id="questionForm" class="mt-3">
+                   <input type="hidden" id="hiddenQuizId" name="quizId" value="<?php echo $quizId; ?>">
+                           <div class="d-flex justify-content-between align-items-center mb-2">
+                               <h4 class="text-dark">Question ' . $questionNumber . '</h4>
+                               <span class="ml-auto text-dark">Marks: ' . $questionMarks . '</span>
+                           </div>
+                           <input type="hidden" name="questionId" value="' . $questionId . '">
+                           <label class="ms-1 form-label text-dark">Question Text</label>
+                           <input type="text" class="form-control mb-2" name="questionText" value="' . $questionText . '">
+                           <label class="ms-1 form-label text-dark">Options</label>';
+
+            // Display existing options and their correct status
+            foreach ($existingOptions as $option) {
+                echo '<div class="input-group mb-2">
+                               <input type="text" class="form-control" name="options[]" value="' . $option . '">
+                               <div class="input-group-append ms-2 mt-1">
+                                   <span class="input-group-text">
+                                       <input type="radio" name="correctAnswer" value="' . $option . '" ' . (in_array($option, $correctAnswers) ? 'checked' : '') . '>
+                                   </span>
+                               </div>
+                           </div>';
+            }
+
+            // Display form buttons
+            echo ' <button type="button" class="btn btn-primary mb-2" onclick="updateQuestion()">Update</button>';
+            echo ' <button type="button" class="btn btn-danger mb-2" onclick="deleteQuestion(' . $questionId . ')">Delete</button>
+
+                       </form>';
+            //   echo "quiz id is :".$quizId;
+
+            $questionNumber++;
+            $printedQuestions[] = $questionId;
+        }
+    }
+} else {
+    echo "Error fetching questions from the database.";
+}
+
+
+mysqli_close($conn);
+?>

@@ -1,0 +1,264 @@
+MainActivity.java
+package com.example.registration;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+
+    EditText usernameEditText;
+    Spinner colorSpinner, styleSpinner, sizeSpinner, backSpinner;
+    EditText inputTextEditText;
+    Button btnButton;
+    DatabaseHelper dbHelper;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        usernameEditText = findViewById(R.id.username);
+        colorSpinner = findViewById(R.id.colorSpinner);
+        styleSpinner = findViewById(R.id.styleSpinner);
+        sizeSpinner = findViewById(R.id.sizeSpinner);
+        backSpinner = findViewById(R.id.backSpinner);
+        inputTextEditText = findViewById(R.id.inputText);
+        btnButton = findViewById(R.id.btn);
+        Spinner colorSpinner = findViewById(R.id.colorSpinner);
+
+        dbHelper = new DatabaseHelper(this);
+
+        String[] colors = {"Red", "Blue", "Green", "Yellow", "Orange", "Purple"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, colors);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        colorSpinner.setAdapter(adapter);
+
+        String[] styles = {"Underline", "Italic", "Bold"};
+        ArrayAdapter<String> styleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, styles);
+        styleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        styleSpinner.setAdapter(styleAdapter);
+
+
+        String[] sizes = {"10", "20", "30","40"};
+        ArrayAdapter<String> sizeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, sizes);
+        sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sizeSpinner.setAdapter(sizeAdapter);
+
+
+        String[] backgrounds = {"black", "green", "red"};
+        ArrayAdapter<String> backAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, backgrounds);
+        backAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        backSpinner.setAdapter(backAdapter);
+
+        btnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String username = usernameEditText.getText().toString();
+                String backgroundColor = backSpinner.getSelectedItem().toString();
+                String textColor = colorSpinner.getSelectedItem().toString();
+                String textSize = sizeSpinner.getSelectedItem().toString();
+                String textStyle = styleSpinner.getSelectedItem().toString();
+                String inputText = inputTextEditText.getText().toString();
+
+
+                boolean success = dbHelper.insertUserData(username, backgroundColor, textColor, textSize, textStyle, inputText);
+
+                if (success) {
+                    Toast.makeText(MainActivity.this,"Success",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(MainActivity.this,"Failed",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        }
+    }
+
+activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+     >
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="115dp"
+            android:src="@drawable/ic_baseline_account_circle_24"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="Welcome"
+            android:layout_marginStart="120dp"
+            android:textSize="40sp"/>
+
+        <EditText
+            android:background="@drawable/edit_design"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:hint="Enter Username"
+            android:id="@+id/username"/>
+
+        <Spinner
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_design"
+            android:padding="20dp"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
+            android:id="@+id/colorSpinner"
+            android:layout_height="wrap_content"/>
+
+        <Spinner
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_design"
+            android:padding="20dp"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
+            android:id="@+id/styleSpinner"
+            android:layout_height="wrap_content"/>
+
+        <Spinner
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_design"
+            android:padding="20dp"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
+            android:id="@+id/sizeSpinner"
+            android:layout_height="wrap_content"/>
+
+        <Spinner
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_design"
+            android:padding="20dp"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
+            android:id="@+id/backSpinner"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edit_design"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:id="@+id/inputText"
+            android:layout_height="100dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginStart="50dp"
+            android:hint="Enter Your input text"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:id="@+id/btn"
+            android:background="@drawable/edit_design"
+            android:text="Submit"
+            android:layout_marginStart="150dp"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</ScrollView>
+
+DatabaseHelper.java
+package com.example.registration;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class DatabaseHelper extends SQLiteOpenHelper {
+
+    private static final String DATABASE_NAME = "Exam141";
+    private static final int DATABASE_VERSION = 1;
+
+
+    private static final String REGTABLE = "UserData";
+    private static final String USERNAME = "username";
+    private static final String BACKGROUND_COLOR = "background_color";
+    private static final String TEXT_COLOR = "text_color";
+    private static final String TEXT_SIZE = "text_size";
+    private static final String TEXT_STYLE = "text_style";
+    private static final String INPUT_TEXT = "input_text";
+
+    private static final String TABLE_CREATE =
+            "CREATE TABLE " + REGTABLE + " (" +
+                    USERNAME + " TEXT, " +
+                    BACKGROUND_COLOR + " TEXT, " +
+                    TEXT_COLOR + " TEXT, " +
+                    TEXT_SIZE + " TEXT, " +
+                    TEXT_STYLE + " TEXT, " +
+                    INPUT_TEXT + " TEXT);";
+
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(TABLE_CREATE);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS `" + REGTABLE + "`");
+        onCreate(db);
+    }
+    public boolean insertUserData(String username, String backgroundColor, String textColor, String textSize, String textStyle, String inputText) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(USERNAME, username);
+        values.put(BACKGROUND_COLOR, backgroundColor);
+        values.put(TEXT_COLOR, textColor);
+        values.put(TEXT_SIZE, textSize);
+        values.put(TEXT_STYLE, textStyle);
+        values.put(INPUT_TEXT, inputText);
+
+        long newRowId = db.insert(REGTABLE, null, values);
+        db.close();
+        return newRowId != -1;
+    }
+
+}
+
+edit_design.xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <stroke
+        android:width="2dp"
+        android:color="#FF9800"
+
+        />
+    <corners
+        android:radius="5dp"
+        />
+</shape>

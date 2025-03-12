@@ -1,0 +1,10 @@
+Username admin
+password Rishabh@123
+
+
+http://localhost/moodle/?redirect=0
+
+
+student account
+
+username monish_khandelwal and password Monish_Khandelwal1710
